@@ -1,0 +1,19 @@
+@model shortURL.Models.ShortenedUrl
+@{
+    ViewData["Title"] = "URL Analytics Results";
+}
+
+<div class="text-center">
+    <h1 class="display-4">URL Analytics Results</h1>
+
+    <div class="mt-4">
+        <strong>Shortened Code:</strong> @Model.ShortenedCode <br />
+        <strong>Original URL:</strong> <a href="@Model.OriginalUrl" target="_blank">@Model.OriginalUrl</a> <br />
+        <strong>Creation Time:</strong> @Model.DateCreated UTC<br />
+        <strong>Click Count:</strong> @Model.ClickCount
+    </div>
+
+    <div class="mt-4">
+        <a href="@Url.Action("Analytics", "Home")" class="btn btn-secondary">Go Back</a>
+    </div>
+</div>

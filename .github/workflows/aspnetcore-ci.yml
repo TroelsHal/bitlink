@@ -1,0 +1,70 @@
+# Event Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out the contents of the repository so that the workflow can access the code.
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    # Set up the specified version of .NET Core on the runner.
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0.112' # Adjust according to your project's .NET version
+
+    # Restore all the NuGet package dependencies in the project.
+    - name: Restore Dependencies
+      run: dotnet restore
+      
+    # Compile project
+    - name: Build
+      run: dotnet build --no-restore
+
+      # Publish the app to a directory
+    - name: Publish
+      run: dotnet publish --configuration Release --output ./publish
+
+    - name: Upload publish directory
+      uses: actions/upload-artifact@v2
+      with:
+        name: publish-artifact
+        path: ./publish
+
+    # Run all tests in project
+    #- name: Test
+    #  run: dotnet test --no-build
+
+  deploy-to-azure:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Download publish directory
+      uses: actions/download-artifact@v2
+      with:
+        name: publish-artifact
+        path: ./publish
+  
+    # Add the Azure Login step here
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+  
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'bitlink'
+        slot-name: 'production' # Optional if not using deployment slots
+        package: './publish'
+        # publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Uncomment if you're using this

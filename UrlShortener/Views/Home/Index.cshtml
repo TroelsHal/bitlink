@@ -1,0 +1,36 @@
+﻿@model shortURL.Models.ShortenedUrl
+@{
+    ViewData["Title"] = "Make short url";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Make short url</h1>
+    <p>Enter your URL below to get a shortened version:</p>
+
+    <form asp-action="ShortenUrl" asp-controller="Home" method="post" class="form-inline justify-content-center">
+        <div class="form-group mb-2">
+            <label for="originalUrl" class="sr-only">Enter URL</label>
+            <input type="text" class="form-control" name="originalUrl" placeholder="Enter URL" required />
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Shorten</button>
+    </form>
+
+    @if (Model != null)
+    {
+        <div class="mt-4">
+            <strong>Original URL:</strong> @Model.OriginalUrl <br />
+            <strong>Shortened URL:</strong> bitlink.azurewebsites.net/@Model.ShortenedCode
+            <button onclick="copyToClipboard('bitlink.azurewebsites.net/@Model.ShortenedCode')" class="btn btn-secondary btn-sm">Copy link to clipboard</button>
+        </div>
+    }
+</div>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Shortened URL copied to clipboard");
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+</script>
