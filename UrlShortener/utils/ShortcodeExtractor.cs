@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 
-public static class ShortcodeExtractor{
+public static class ShortcodeExtractor
+{
 
     private const string BaseUrl = "bitlink.azurewebsites.net/";
 

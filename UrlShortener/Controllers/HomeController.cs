@@ -13,11 +13,11 @@ public class HomeController : Controller
     private readonly UrlShortenerContext _context;
     private readonly ILogger<HomeController> _logger;
 
-    
+
     public HomeController(ILogger<HomeController> logger, UrlShortenerContext context)
     {
-    _logger = logger;
-    _context = context;
+        _logger = logger;
+        _context = context;
     }
 
     [HttpGet]
@@ -26,7 +26,7 @@ public class HomeController : Controller
         _logger.LogInformation("Index method called.");
         return View();
     }
-    
+
     [HttpGet("About")]
     public IActionResult About()
     {
@@ -43,7 +43,7 @@ public class HomeController : Controller
     [HttpPost("Home/ShortenUrl")]
     public IActionResult ShortenUrl(string originalUrl)
     {
-        // Create a new shortened URL database entry without the short url
+        // Create a new shortened URL database-entry without the short url
         ShortenedUrl newUrl = new(originalUrl);
         _context.ShortenedUrls.Add(newUrl);
         _context.SaveChanges();
@@ -54,7 +54,7 @@ public class HomeController : Controller
         do
         {
             shortCode = GenerateRandomShortCode();
-        } while (_context.ShortenedUrls.Any(u => u.ShortenedCode == shortCode)); 
+        } while (_context.ShortenedUrls.Any(u => u.ShortenedCode == shortCode));
 
         newUrl.ShortenedCode = shortCode;
         _context.SaveChanges();
@@ -75,7 +75,7 @@ public class HomeController : Controller
         }
 
         var urlEntry = _context.ShortenedUrls.FirstOrDefault(u => u.ShortenedCode == shortCode);
-        if(urlEntry == null)
+        if (urlEntry == null)
         {
             return View("NotFound");
         }
@@ -85,7 +85,7 @@ public class HomeController : Controller
         _context.SaveChanges();
 
         string originalUrl = urlEntry.OriginalUrl;
-        if (!originalUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) 
+        if (!originalUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
             && !originalUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
             originalUrl = "http://" + originalUrl;
